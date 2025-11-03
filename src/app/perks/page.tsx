@@ -112,7 +112,7 @@ export default function PerksPage() {
         {
           title: '1:1 Office Hours',
           description: 'Book time with vetted experts in finance, policy, or brand design.',
-          hook: 'Talk to someone who's been there.',
+          hook: 'Talk to someone who\'s been there.',
         },
         {
           title: 'Playbooks Library',
@@ -177,7 +177,7 @@ export default function PerksPage() {
         {
           title: 'Priority Beta Access',
           description: 'Be first to test and influence upcoming Station 15 features.',
-          hook: 'Lead what's next.',
+          hook: 'Lead what\'s next.',
         },
       ],
     },
