@@ -1,6 +1,7 @@
 'use client';
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 
 const COLORS = {
@@ -44,13 +45,16 @@ export default function Sidebar() {
     >
       {/* Logo Section */}
       <div className="p-6 border-b" style={{ borderColor: COLORS.gray800 }}>
-        <div className="flex items-center space-x-3">
-          <div className="text-2xl font-bold" style={{ color: '#FFFFFF' }}>S15</div>
-          <div>
-            <div className="text-sm font-bold" style={{ color: '#FFFFFF' }}>Station 15</div>
-            <div className="text-xs" style={{ color: COLORS.gray400 }}>Keep Moving</div>
-          </div>
-        </div>
+        <Link href="/" className="flex items-center">
+          <Image
+            src="/station15-logo.png"
+            alt="Station 15"
+            width={140}
+            height={40}
+            className="object-contain"
+            priority
+          />
+        </Link>
       </div>
 
       {/* Navigation */}

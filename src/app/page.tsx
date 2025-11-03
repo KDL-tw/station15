@@ -1,6 +1,7 @@
 'use client';
 
 import Link from "next/link";
+import Image from "next/image";
 import { useEffect, useState } from "react";
 import { BusinessMetrics } from "@/lib/types";
 import Sidebar from "@/components/Sidebar";
@@ -109,9 +110,15 @@ export default function Dashboard() {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
               {/* Left: Text Content */}
               <div>
-                <div className="flex items-center space-x-2 mb-4">
-                  <div className="text-2xl font-bold" style={{ color: COLORS.indigo }}>S15</div>
-                  <span className="text-sm font-medium" style={{ color: COLORS.gray600 }}>Station 15</span>
+                <div className="mb-6">
+                  <Image
+                    src="/station15-logo.png"
+                    alt="Station 15"
+                    width={180}
+                    height={52}
+                    className="object-contain"
+                    priority
+                  />
                 </div>
                 <h1 className="text-4xl font-bold mb-3" style={{ color: COLORS.gray900 }}>
                   Weekly Payback Schedule
