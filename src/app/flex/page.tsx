@@ -27,6 +27,7 @@ export default function FlexPage() {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [authorizedAmount, setAuthorizedAmount] = useState<number>(0);
   const [selectedAmount, setSelectedAmount] = useState<number>(0);
+  const [acknowledged, setAcknowledged] = useState<boolean>(false);
   const [loading, setLoading] = useState(true);
   const [calculationDetails, setCalculationDetails] = useState({
     avgDeposits30d: 0,
@@ -269,17 +270,35 @@ export default function FlexPage() {
                 </div>
               </div>
 
+              {/* Loan Acknowledgment */}
+              <div className="mt-6 p-5 rounded-lg border" style={{ backgroundColor: COLORS.gray50, borderColor: COLORS.gray300 }}>
+                <div className="flex items-start space-x-3">
+                  <input
+                    type="checkbox"
+                    id="loan-acknowledge"
+                    checked={acknowledged}
+                    onChange={(e) => setAcknowledged(e.target.checked)}
+                    className="mt-1 w-5 h-5 rounded border-gray-300 cursor-pointer"
+                    style={{ accentColor: COLORS.indigo }}
+                  />
+                  <label htmlFor="loan-acknowledge" className="text-sm cursor-pointer flex-1" style={{ color: COLORS.gray700 }}>
+                    <strong>I acknowledge that this is a loan</strong> and understand that underwriting is based on my account data, 
+                    including transaction history, payment patterns, and account performance. I agree to the loan terms and repayment schedule.
+                  </label>
+                </div>
+              </div>
+
               {/* Action Button */}
-              <div className="flex justify-center">
+              <div className="flex justify-center mt-6">
                 <button
-                  disabled={selectedAmount === 0 || authorizedAmount === 0}
+                  disabled={selectedAmount === 0 || authorizedAmount === 0 || !acknowledged}
                   className="px-8 py-4 rounded-xl font-semibold text-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed hover:shadow-lg"
                   style={{
-                    backgroundColor: selectedAmount > 0 && authorizedAmount > 0 ? COLORS.indigo : COLORS.gray300,
+                    backgroundColor: selectedAmount > 0 && authorizedAmount > 0 && acknowledged ? COLORS.indigo : COLORS.gray300,
                     color: '#FFFFFF',
                   }}
                 >
-                  Request Flex Loan
+                  Activate Flex
                 </button>
               </div>
             </>
