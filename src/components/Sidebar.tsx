@@ -164,13 +164,5 @@ function SidebarContent() {
 }
 
 export default function Sidebar() {
-  const { sidebarWidth } = useSidebar();
-  
-  return (
-    <>
-      <SidebarContent />
-      {/* Spacer div to account for fixed sidebar */}
-      <div style={{ width: sidebarWidth }} className="flex-shrink-0" />
-    </>
-  );
+  return <SidebarContent />;
 }
