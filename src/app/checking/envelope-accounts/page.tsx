@@ -20,35 +20,15 @@ const COLORS = {
   green: '#10B981',
 };
 
-interface EnvelopeAccount {
-  id: string;
-  name: string;
-  balance: number;
-  targetAmount?: number;
-  purpose: string;
-  createdAt: string;
-}
-
 export default function EnvelopeAccountsPage() {
   const { sidebarWidth } = useSidebar();
-  const [accounts, setAccounts] = useState<EnvelopeAccount[]>([
-    {
-      id: '1',
-      name: 'Tax Reserve',
-      balance: 5000.00,
-      targetAmount: 10000.00,
-      purpose: 'Quarterly tax payments',
-      createdAt: '2024-01-01',
-    },
-    {
-      id: '2',
-      name: 'Equipment Fund',
-      balance: 2500.00,
-      targetAmount: 5000.00,
-      purpose: 'New equipment purchases',
-      createdAt: '2024-01-05',
-    },
-  ]);
+  const [accounts, setAccounts] = useState<EnvelopeAccount[]>([]);
+
+  // Load accounts on mount
+  useEffect(() => {
+    const loadedAccounts = getEnvelopeAccounts();
+    setAccounts(loadedAccounts);
+  }, []);
   const [isCreating, setIsCreating] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
@@ -69,16 +49,28 @@ export default function EnvelopeAccountsPage() {
       setTimeout(() => {
         setCreatingStep(3);
         setTimeout(() => {
+          // Generate account number (last 4 digits)
+          const accountNumber = Math.floor(Math.random() * 9000 + 1000).toString();
+          
           const newAccount: EnvelopeAccount = {
             id: Date.now().toString(),
             name: formData.name,
             balance: 0,
+            accountNumber: accountNumber,
             targetAmount: formData.targetAmount ? parseFloat(formData.targetAmount) : undefined,
             purpose: formData.purpose || 'Savings envelope',
             createdAt: new Date().toISOString().split('T')[0],
           };
           
+          // Save to localStorage and update state
+          addEnvelopeAccount(newAccount);
           setAccounts([...accounts, newAccount]);
+          
+          // Notify sidebar of change
+          if (typeof window !== 'undefined') {
+            window.dispatchEvent(new Event('envelopeAccountsChanged'));
+          }
+          
           setIsCreating(false);
           setFormData({ name: '', purpose: '', targetAmount: '' });
           setCreatingStep(0);

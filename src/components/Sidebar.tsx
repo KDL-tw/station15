@@ -2,7 +2,8 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { createContext, useContext, useState, ReactNode } from 'react';
+import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { getEnvelopeAccounts, formatAccountNameForNav, EnvelopeAccount } from '@/lib/envelopeAccounts';
 
 // Sidebar Context
 interface SidebarContextType {
@@ -105,6 +106,37 @@ function SidebarContent() {
   const { collapsed, setCollapsed } = useSidebar();
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const [showCheckingSubmenu, setShowCheckingSubmenu] = useState(false);
+  const [envelopeAccounts, setEnvelopeAccounts] = useState<EnvelopeAccount[]>([]);
+
+  // Load envelope accounts
+  useEffect(() => {
+    const loadAccounts = () => {
+      const accounts = getEnvelopeAccounts();
+      setEnvelopeAccounts(accounts);
+    };
+    
+    loadAccounts();
+    
+    // Listen for storage changes (when accounts are added/updated)
+    const handleStorageChange = () => {
+      loadAccounts();
+    };
+    
+    window.addEventListener('storage', handleStorageChange);
+    window.addEventListener('envelopeAccountsChanged', handleStorageChange);
+    
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+      window.removeEventListener('envelopeAccountsChanged', handleStorageChange);
+    };
+  }, []);
+
+  // Build envelope accounts submenu items
+  const envelopeAccountSubmenu = envelopeAccounts.map((account) => ({
+    name: formatAccountNameForNav(account),
+    href: `/checking/envelope-accounts/${account.id}`,
+    icon: EnvelopeIcon,
+  }));
 
   const navigation = [
     { name: 'Home', href: '/', icon: HomeIcon },
@@ -114,7 +146,7 @@ function SidebarContent() {
       icon: CheckingIcon,
       submenu: [
         { name: 'Virtual Cards', href: '/checking/virtual-cards', icon: VirtualCardIcon },
-        { name: 'Envelope Accounts', href: '/checking/envelope-accounts', icon: EnvelopeIcon },
+        ...envelopeAccountSubmenu,
       ]
     },
     { name: 'Phase Card', href: '/phase-card', icon: CardIcon },
@@ -132,9 +164,11 @@ function SidebarContent() {
 
   // Check if checking submenu should be open
   const isCheckingActive = pathname?.startsWith('/checking');
-  if (isCheckingActive && !showCheckingSubmenu) {
-    setShowCheckingSubmenu(true);
-  }
+  useEffect(() => {
+    if (isCheckingActive && !showCheckingSubmenu) {
+      setShowCheckingSubmenu(true);
+    }
+  }, [isCheckingActive, showCheckingSubmenu]);
 
   return (
     <>
