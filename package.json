@@ -1,6 +1,7 @@
 {
-  "name": "web",
-  "version": "0.1.0",
+  "name": "station15",
+  "version": "1.0.0",
+  "description": "Station 15 - Time-based underwriting platform for service businesses",
   "private": true,
   "scripts": {
     "dev": "next dev",

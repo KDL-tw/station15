@@ -1,36 +1,114 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Station 15
 
-## Getting Started
+**Time-based underwriting for service businesses**
 
-First, run the development server:
+Station 15 is an underwriting platform that evaluates service businesses using time-based metrics and predictive models.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+## Tech Stack
+
+- **Frontend**: Next.js 16 (App Router) + TypeScript + Tailwind CSS
+- **Backend**: Next.js API Routes
+- **Database**: Supabase (PostgreSQL)
+- **Deployment**: Vercel
+- **State Management**: Zustand + React Query
+
+## Quick Start
+
+### Prerequisites
+
+- Node.js 18+
+- npm or yarn
+- Supabase account and project
+
+### Setup
+
+1. **Clone and install**:
+   ```bash
+   git clone https://github.com/KDL-tw/station15.git
+   cd station15
+   npm install
+   ```
+
+2. **Configure environment variables**:
+   ```bash
+   cp .env.example .env.local
+   ```
+   Fill in your Supabase credentials and other variables.
+
+3. **Run development server**:
+   ```bash
+   npm run dev
+   ```
+
+4. **Open**: http://localhost:3000
+
+## Project Structure
+
+```
+station15/
+├── src/
+│   ├── app/              # Next.js App Router pages
+│   │   ├── api/          # API routes
+│   │   ├── admin/        # Admin dashboard
+│   │   └── ...           # User pages
+│   └── lib/              # Utilities
+│       ├── supabase.ts   # Supabase client
+│       └── types.ts      # TypeScript types
+├── supabase/
+│   └── schema.sql        # Database schema
+├── scripts/
+│   └── generate_data.py  # Data generation
+└── public/               # Static assets
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## API Routes
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- `POST /api/v1/evaluate` - Underwriting evaluation
+- `POST /api/v1/advanceCycle` - Cycle simulation
+- `POST /api/v1/rules/update` - Update rules
+- `GET /api/v1/business/:id` - Business metrics
+- `GET /api/healthz` - Health check
+- `GET /api/readiness` - Readiness check
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Environment Variables
 
-## Learn More
+See `.env.example` for all required variables.
 
-To learn more about Next.js, take a look at the following resources:
+**Required:**
+- `NEXT_PUBLIC_SUPABASE_URL` - Supabase project URL
+- `NEXT_PUBLIC_SUPABASE_ANON_KEY` - Supabase anon key
+- `SUPABASE_SERVICE_ROLE` - Service role key (for API routes)
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+**Optional (Feature Flags):**
+- `FEATURE_DEMO_SIM` - Enable cycle simulation
+- `FEATURE_FAKE_AUTH` - Use fake auth for development
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Deployment
 
-## Deploy on Vercel
+### Vercel
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+1. Push to GitHub
+2. Import project in Vercel dashboard
+3. Add environment variables
+4. Deploy!
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+The project is configured for automatic Vercel deployment.
+
+## Development
+
+### Local Development
+
+```bash
+npm run dev          # Start Next.js
+npm run build       # Build for production
+npm run start       # Start production server
+npm run lint        # Run ESLint
+```
+
+### Database
+
+Supabase schema is in `supabase/schema.sql`. Apply it via Supabase dashboard or CLI.
+
+## License
+
+Private

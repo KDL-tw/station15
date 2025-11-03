@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { EvaluateRequest, EvaluateResponse } from '@/lib/types';
+import { createServerClient } from '@/lib/supabase';
 
 // Feature flags
 const FEATURE_FAKE_AUTH = process.env.FEATURE_FAKE_AUTH === 'true';
