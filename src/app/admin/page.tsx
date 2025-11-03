@@ -1,8 +1,9 @@
 'use client';
 
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Business, Decision, RuleEvent, RulesConfig } from "@/lib/types";
+import { ALL_PERKS, getPerkVisibility, togglePerkVisibility, PerkVisibility } from "@/lib/perks";
 
 // Admin UI Style: neutral gray grid, monospace numerics, keyboard shortcuts, print-friendly
 const ADMIN_COLORS = {
@@ -13,6 +14,7 @@ const ADMIN_COLORS = {
 
 export default function AdminPage() {
   const [activeTab, setActiveTab] = useState('Business List');
+  const [perkVisibility, setPerkVisibility] = useState<PerkVisibility>({});
 
   // Mock data - TODO: Replace with actual API calls
   const mockBusinesses: Business[] = [
@@ -95,6 +97,7 @@ export default function AdminPage() {
     { name: 'Profile Drill-Down', shortcut: 'P' },
     { name: 'Audit / Compliance', shortcut: 'A' },
     { name: 'Setup Wizard', shortcut: 'S' },
+    { name: 'Perks Manager', shortcut: 'K' },
   ];
 
   const renderBusinessList = () => (
@@ -205,6 +208,84 @@ export default function AdminPage() {
     </div>
   );
 
+  // Load perk visibility on mount
+  useEffect(() => {
+    setPerkVisibility(getPerkVisibility());
+  }, []);
+
+  const handleTogglePerkVisibility = (categoryName: string, perkTitle: string, visible: boolean) => {
+    const updated = togglePerkVisibility(categoryName, perkTitle, visible);
+    setPerkVisibility(updated);
+    // Dispatch custom event to update perks page in same tab
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new Event('perkVisibilityChanged'));
+    }
+  };
+
+  const renderPerksManager = () => (
+    <div className="bg-white border border-gray-300 p-4">
+      <div className="mb-4">
+        <h3 className="text-sm font-medium mb-2">Perks Visibility Manager</h3>
+        <p className="text-xs text-gray-600 mb-4">
+          Toggle visibility for individual perk cards. Hidden perks will not appear on the user-facing perks page.
+        </p>
+      </div>
+      
+      <div className="space-y-6">
+        {ALL_PERKS.map((category) => (
+          <div key={category.name} className="border-b border-gray-200 pb-4 last:border-b-0">
+            <h4 className="text-sm font-semibold mb-3" style={{ color: ADMIN_COLORS.darkGray }}>
+              {category.name}
+            </h4>
+            <div className="space-y-2">
+              {category.perks.map((perk) => {
+                const isVisible = perkVisibility[category.name]?.[perk.title] !== false;
+                return (
+                  <div
+                    key={perk.title}
+                    className="flex items-center justify-between p-3 border border-gray-200 hover:bg-gray-50"
+                  >
+                    <div className="flex-1">
+                      <div className="text-sm font-medium mb-1">{perk.title}</div>
+                      <div className="text-xs text-gray-500 line-clamp-1">{perk.description}</div>
+                    </div>
+                    <div className="flex items-center space-x-3 ml-4">
+                      <span
+                        className={`text-xs px-2 py-1 rounded ${
+                          isVisible
+                            ? 'bg-green-100 text-green-700'
+                            : 'bg-gray-100 text-gray-600'
+                        }`}
+                      >
+                        {isVisible ? 'Visible' : 'Hidden'}
+                      </span>
+                      <button
+                        onClick={() => handleTogglePerkVisibility(category.name, perk.title, !isVisible)}
+                        className={`px-3 py-1 text-xs border transition-colors ${
+                          isVisible
+                            ? 'border-gray-300 hover:bg-gray-50'
+                            : 'border-gray-700 bg-gray-700 text-white hover:bg-gray-800'
+                        }`}
+                      >
+                        {isVisible ? 'Hide' : 'Show'}
+                      </button>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        ))}
+      </div>
+      
+      <div className="mt-6 pt-4 border-t border-gray-300">
+        <div className="text-xs text-gray-600">
+          <strong>Note:</strong> Changes take effect immediately on the user-facing perks page.
+        </div>
+      </div>
+    </div>
+  );
+
   const renderTabContent = () => {
     switch (activeTab) {
       case 'Business List':
@@ -223,6 +304,8 @@ export default function AdminPage() {
         return <div className="bg-white border border-gray-300 p-4">Model Card snapshot, exports (placeholder)</div>;
       case 'Setup Wizard':
         return <div className="bg-white border border-gray-300 p-4">Create mock businesses fast (placeholder)</div>;
+      case 'Perks Manager':
+        return renderPerksManager();
       default:
         return renderBusinessList();
     }
