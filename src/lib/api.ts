@@ -80,3 +80,50 @@ export async function fetchCreditHistory(businessId: string): Promise<any[]> {
   return response.json();
 }
 
+export async function fetchTransactions(businessId: string, limit: number = 50): Promise<any[]> {
+  if (USE_MOCK_DATA) {
+    // Mock transactions - generate more detailed data
+    const transactions = [];
+    const today = new Date();
+    const types = ['inflow', 'outflow', 'recurring', 'one_time'];
+    const descriptions = {
+      inflow: ['Payment received', 'Client payment', 'Invoice paid', 'Revenue deposit'],
+      outflow: ['Vendor payment', 'Office supplies', 'Equipment purchase', 'Service fee'],
+      recurring: ['Monthly subscription', 'Recurring revenue', 'Retainer payment', 'Subscription revenue'],
+      one_time: ['One-time payment', 'Special project', 'Bonus payment'],
+    };
+
+    for (let i = 0; i < limit; i++) {
+      const daysAgo = Math.floor(Math.random() * 30);
+      const date = new Date(today);
+      date.setDate(date.getDate() - daysAgo);
+      
+      const type = types[Math.floor(Math.random() * types.length)];
+      const typeDescriptions = descriptions[type as keyof typeof descriptions] || descriptions.outflow;
+      const description = typeDescriptions[Math.floor(Math.random() * typeDescriptions.length)];
+      
+      let amount;
+      if (type === 'inflow' || type === 'recurring') {
+        amount = Math.random() * 20000 + 5000;
+      } else {
+        amount = -(Math.random() * 15000 + 1000);
+      }
+
+      transactions.push({
+        id: `tx-${i}`,
+        amount: Math.round(amount * 100) / 100,
+        type,
+        description,
+        date: date.toISOString().split('T')[0],
+        transactionDate: date.toISOString().split('T')[0],
+      });
+    }
+
+    return transactions.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+  }
+
+  // Real API call - when Supabase is connected
+  const response = await fetch(`/api/v1/transactions/${businessId}?limit=${limit}`);
+  return response.json();
+}
+
