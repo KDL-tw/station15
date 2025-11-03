@@ -18,6 +18,7 @@ const COLORS = {
   gray700: '#374151',
   gray900: '#111827',
   green: '#10B981',
+  amber: '#F59E0B',
 };
 
 interface Transfer {
