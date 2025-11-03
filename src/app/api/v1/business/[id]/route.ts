@@ -6,7 +6,7 @@ const ENGINE_SHARED_SECRET = process.env.ENGINE_SHARED_SECRET || 'local-dev-secr
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     // Simple auth check
@@ -15,7 +15,7 @@ export async function GET(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const businessId = params.id;
+    const { id: businessId } = await params;
 
     // Mock business metrics response
     const response: BusinessMetrics = {
