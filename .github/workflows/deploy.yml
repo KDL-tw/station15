@@ -1,4 +1,4 @@
-name: Deploy Station 15
+name: Deploy Station 15 to Vercel
 
 on:
   push:
@@ -6,12 +6,9 @@ on:
       - main
   workflow_dispatch: # Allow manual triggering
 
-env:
-  ENCORE_ENVIRONMENT: dev
-
 jobs:
-  test:
-    name: Test and Build
+  deploy:
+    name: Deploy to Vercel
     runs-on: ubuntu-latest
     
     steps:
@@ -23,59 +20,20 @@ jobs:
         with:
           node-version: '18'
           cache: 'npm'
-          cache-dependency-path: apps/web/package-lock.json
+          cache-dependency-path: package-lock.json
 
-      - name: Setup Go
-        uses: actions/setup-go@v5
-        with:
-          go-version: '1.21'
-
-      - name: Install Next.js dependencies
-        working-directory: apps/web
+      - name: Install dependencies
         run: npm ci
 
       - name: Build Next.js app
-        working-directory: apps/web
         run: npm run build
         env:
           NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
           NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
 
-      - name: Verify Go modules
-        working-directory: apps/engine
-        run: go mod download
-
-  deploy-encore:
-    name: Deploy Encore Backend
-    runs-on: ubuntu-latest
-    needs: test
-    
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup Go
-        uses: actions/setup-go@v5
+      - name: Deploy to Vercel
+        uses: amondnet/vercel-action@v25
         with:
-          go-version: '1.21'
-
-      - name: Install Encore CLI
-        run: |
-          curl -L https://encore.dev/install.sh | bash
-          echo "$HOME/.encore/bin" >> $GITHUB_PATH
-
-      - name: Authenticate with Encore
-        run: encore auth --non-interactive
-        env:
-          ENCORE_API_KEY: ${{ secrets.ENCORE_API_KEY }}
-
-      - name: Deploy to Encore
-        working-directory: apps/engine
-        run: encore deploy --env=dev
-        env:
-          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
-          SUPABASE_SERVICE_ROLE: ${{ secrets.SUPABASE_SERVICE_ROLE }}
-          ENGINE_SHARED_SECRET: ${{ secrets.ENGINE_SHARED_SECRET }}
-          FEATURE_DEMO_SIM: ${{ secrets.FEATURE_DEMO_SIM }}
-          FEATURE_FAKE_AUTH: ${{ secrets.FEATURE_FAKE_AUTH }}
-
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}

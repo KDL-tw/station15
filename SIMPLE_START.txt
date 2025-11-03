@@ -1,0 +1,41 @@
+═══════════════════════════════════════════════════════
+  SIMPLE INSTRUCTIONS TO SEE STATION 15
+═══════════════════════════════════════════════════════
+
+I see the issue - the page is loading but stuck. Let's restart it fresh.
+
+OPTION 1: Use the Script I Just Made
+
+Open Terminal and run:
+
+    cd /Users/klanier/Desktop/Station15/station15
+    ./START_STATION15.sh
+
+Wait for it to say "Ready on http://localhost:XXXX"
+Then open that URL in your browser.
+
+OPTION 2: Manual Start
+
+1. Open Terminal
+2. Run these commands:
+
+   cd /Users/klanier/Desktop/Station15/station15/apps/web
+   npm run dev
+
+3. Wait for "Ready on http://localhost:XXXX"
+4. Open that URL in your browser
+5. Should see Station 15 dashboard!
+
+═══════════════════════════════════════════════════════
+
+The page should show:
+- "Station 15" header in Indigo
+- "Keep Moving" tagline  
+- Business metrics cards
+- Recent transactions
+
+If you still see "Loading..." after 10 seconds, there might be a
+JavaScript error. Check the browser console (F12) for errors.
+
+═══════════════════════════════════════════════════════
+
