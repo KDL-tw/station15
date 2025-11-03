@@ -1,9 +1,10 @@
 'use client';
 
 import Image from "next/image";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Sidebar, { useSidebar } from "@/components/Sidebar";
 import BackButton from "@/components/BackButton";
+import { getEnvelopeAccounts, addEnvelopeAccount, EnvelopeAccount } from "@/lib/envelopeAccounts";
 
 const COLORS = {
   indigo: '#312E81',
