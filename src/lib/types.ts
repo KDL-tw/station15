@@ -1,5 +1,5 @@
-// Shared DTOs between Next.js UI and Encore API
-// UI contract: Next.js calls Encore only
+// Shared DTOs between Next.js UI and API Routes
+// Type definitions for Station 15 underwriting platform
 
 export interface Business {
   id: string;
