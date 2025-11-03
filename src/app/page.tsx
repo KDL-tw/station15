@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { BusinessMetrics } from "@/lib/types";
 import Sidebar, { useSidebar } from "@/components/Sidebar";
 import UtilizationCircle from "@/components/UtilizationCircle";
+import { getUtilizationColor } from "@/components/UtilizationCircle";
 import CreditLimitTooltip from "@/components/CreditLimitTooltip";
 
 // PRD Brand Colors: Indigo #312E81 / Crimson #DC143C
@@ -37,7 +38,7 @@ export default function Dashboard() {
     const mockMetrics: BusinessMetrics = {
       business: {
         id: "demo-business-1",
-        name: "Demo Business Corp",
+        name: "ABC Corp",
         balance: 12500,
         recurringPct: 68.5,
         volatility: 12.3,
@@ -106,7 +107,7 @@ export default function Dashboard() {
                 height={40}
                 className="object-contain"
               />
-              <h1 className="text-2xl font-bold" style={{ color: COLORS.gray900 }}>Dashboard</h1>
+              <h1 className="text-2xl font-bold" style={{ color: COLORS.gray900 }}>Home</h1>
             </div>
           </div>
         </header>
@@ -152,7 +153,7 @@ export default function Dashboard() {
             {/* Utilization */}
             <div className="bg-white rounded-xl border shadow-sm p-6 flex flex-col items-center justify-center" style={{ borderColor: COLORS.gray200 }}>
               <UtilizationCircle percentage={metrics.utilizationPercentage} />
-              <div className="mt-3 text-sm font-medium" style={{ color: COLORS.crimson }}>
+              <div className="mt-3 text-sm font-medium" style={{ color: getUtilizationColor(metrics.utilizationPercentage) }}>
                 {metrics.utilizationPercentage}% utilized
               </div>
             </div>

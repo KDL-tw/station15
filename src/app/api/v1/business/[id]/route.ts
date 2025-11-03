@@ -18,10 +18,11 @@ export async function GET(
     const { id: businessId } = await params;
 
     // Mock business metrics response
+    // TODO: Replace with actual database query
     const response: BusinessMetrics = {
       business: {
         id: businessId,
-        name: 'Demo Business Corp',
+        name: 'ABC Corp',
         balance: 12500,
         recurringPct: 68.5,
         volatility: 12.3,
