@@ -107,7 +107,7 @@ export default function PerksPage() {
         {
           title: 'Founder Clinics',
           description: 'Monthly live sessions on funding, compliance, and scaling your business.',
-          hook: 'Learn what schools don't teach.',
+          hook: 'Learn what schools don\'t teach.',
         },
         {
           title: '1:1 Office Hours',
