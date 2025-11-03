@@ -19,16 +19,28 @@ export default function AdminPage() {
     {
       id: "business-1",
       name: "TechCorp Inc",
+      balance: 25000,
+      recurringPct: 68.5,
+      volatility: 12.3,
       chargeLimit: 100000,
       currentBalance: 25000,
-      flexState: { riskLevel: "medium", sector: "Technology" }
+      flexState: { riskLevel: "medium", sector: "Technology" },
+      cycleCount: 4,
+      onTimeRate: 0.96,
+      liquidity: 1.2,
     },
     {
       id: "business-2",
       name: "RetailPlus LLC",
+      balance: 15000,
+      recurringPct: 72.1,
+      volatility: 8.5,
       chargeLimit: 50000,
       currentBalance: 15000,
-      flexState: { riskLevel: "low", sector: "Retail" }
+      flexState: { riskLevel: "low", sector: "Retail" },
+      cycleCount: 5,
+      onTimeRate: 0.98,
+      liquidity: 1.4,
     }
   ];
 
@@ -51,8 +63,12 @@ export default function AdminPage() {
     {
       id: "decision-1",
       decisionType: "underwrite",
-      decision: { approved: true, limit: 100000 },
+      limit: 100000,
+      term: 30,
+      reason: "Standard underwriting evaluation",
       reasonCodes: ["credit_score_good", "revenue_stable"],
+      aprBand: "standard",
+      decision: { approved: true, limit: 100000 },
       createdAt: "2024-01-10T10:00:00Z"
     }
   ];
@@ -60,9 +76,12 @@ export default function AdminPage() {
   const mockRuleEvents: RuleEvent[] = [
     {
       id: "event-1",
+      ruleId: "credit_limit_check",
       ruleName: "credit_limit_check",
+      trigger: { input: 75000, threshold: 100000 },
       triggerDetail: { input: 75000, threshold: 100000 },
       outcome: "passed",
+      timestamp: "2024-01-10T10:00:00Z",
       createdAt: "2024-01-10T10:00:00Z"
     }
   ];
