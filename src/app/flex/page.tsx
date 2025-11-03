@@ -1,39 +1,45 @@
 'use client';
 
-import Link from "next/link";
+import Image from "next/image";
+import Sidebar from "@/components/Sidebar";
 
 const COLORS = {
   indigo: '#312E81',
   crimson: '#DC143C',
+  gray50: '#F9FAFB',
+  gray200: '#E5E7EB',
+  gray600: '#4B5563',
+  gray700: '#374151',
+  gray900: '#111827',
 };
 
 export default function FlexPage() {
   return (
-    <div className="min-h-screen" style={{ backgroundColor: '#f9fafb' }}>
-      <header className="bg-white shadow-sm border-b" style={{ borderColor: `${COLORS.indigo}20` }}>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <Link href="/" className="text-2xl font-bold" style={{ color: COLORS.indigo }}>Station 15</Link>
-            <nav className="flex space-x-4">
-              <Link href="/" className="px-3 py-2 text-sm font-medium hover:opacity-80" style={{ color: COLORS.indigo }}>
-                Dashboard
-              </Link>
-            </nav>
+    <div className="min-h-screen flex" style={{ backgroundColor: COLORS.gray50 }}>
+      <Sidebar />
+      <div className="flex-1" style={{ marginLeft: '256px' }}>
+        <header className="bg-white border-b" style={{ borderColor: COLORS.gray200 }}>
+          <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-10 py-4">
+            <div className="flex items-center space-x-3">
+              <Image
+                src="/s15-icon.png"
+                alt="Station 15"
+                width={40}
+                height={40}
+                className="object-contain"
+              />
+              <h1 className="text-2xl font-bold" style={{ color: COLORS.gray900 }}>Flex Loan / AP Mgmt</h1>
+            </div>
           </div>
-        </div>
-      </header>
+        </header>
 
-      <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-        <div className="px-4 py-6">
-          <h1 className="text-3xl font-semibold mb-4" style={{ color: COLORS.indigo }}>
-            Flex Loan / AP Mgmt
-          </h1>
-          <p className="text-gray-600 mb-8">Net-term slider → 'Days Gained.'</p>
+        <main className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-10 py-8">
+          <p className="text-base mb-8" style={{ color: COLORS.gray600 }}>Net-term slider → 'Days Gained.'</p>
           
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+          <div className="bg-white rounded-xl border shadow-sm p-6" style={{ borderColor: COLORS.gray200 }}>
             <div className="space-y-6">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium mb-2" style={{ color: COLORS.gray700 }}>
                   Net-term slider
                 </label>
                 <input 
@@ -43,26 +49,26 @@ export default function FlexPage() {
                   defaultValue="30" 
                   className="w-full"
                 />
-                <div className="flex justify-between text-xs text-gray-500 mt-1">
+                <div className="flex justify-between text-xs mt-1" style={{ color: COLORS.gray600 }}>
                   <span>0 days</span>
                   <span>30 days</span>
                   <span>90 days</span>
                 </div>
               </div>
-              <div className="border-t pt-4">
+              <div className="border-t pt-4" style={{ borderColor: COLORS.gray200 }}>
                 <div className="text-center">
                   <div className="text-3xl font-bold mb-2" style={{ color: COLORS.crimson }}>
                     +15 Days Gained
                   </div>
-                  <p className="text-sm text-gray-600">
+                  <p className="text-sm" style={{ color: COLORS.gray600 }}>
                     Based on current eligibility: (cycles≥3) AND (on_time≥0.95) AND (recurring≥0.65) AND (liquidity≥1.1)
                   </p>
                 </div>
               </div>
             </div>
           </div>
-        </div>
-      </main>
+        </main>
+      </div>
     </div>
   );
 }

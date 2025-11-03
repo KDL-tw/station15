@@ -1,42 +1,49 @@
 'use client';
 
-import Link from "next/link";
+import Image from "next/image";
+import Sidebar from "@/components/Sidebar";
 
 const COLORS = {
   indigo: '#312E81',
   crimson: '#DC143C',
+  gray50: '#F9FAFB',
+  gray200: '#E5E7EB',
+  gray300: '#D1D5DB',
+  gray400: '#9CA3AF',
+  gray600: '#4B5563',
+  gray900: '#111827',
 };
 
 export default function TransfersPage() {
   return (
-    <div className="min-h-screen" style={{ backgroundColor: '#f9fafb' }}>
-      <header className="bg-white shadow-sm border-b" style={{ borderColor: `${COLORS.indigo}20` }}>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <Link href="/" className="text-2xl font-bold" style={{ color: COLORS.indigo }}>Station 15</Link>
-            <nav className="flex space-x-4">
-              <Link href="/" className="px-3 py-2 text-sm font-medium hover:opacity-80" style={{ color: COLORS.indigo }}>
-                Dashboard
-              </Link>
-            </nav>
-          </div>
-        </div>
-      </header>
-
-      <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-        <div className="px-4 py-6">
-          <h1 className="text-3xl font-semibold mb-4" style={{ color: COLORS.indigo }}>
-            Transfers / Sweeps
-          </h1>
-          <p className="text-gray-600 mb-8">Visualize internal flows</p>
-          
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-            <div className="h-64 border-2 border-dashed border-gray-300 rounded flex items-center justify-center">
-              <span className="text-gray-400">Internal flow visualization (placeholder)</span>
+    <div className="min-h-screen flex" style={{ backgroundColor: COLORS.gray50 }}>
+      <Sidebar />
+      <div className="flex-1" style={{ marginLeft: '256px' }}>
+        <header className="bg-white border-b" style={{ borderColor: COLORS.gray200 }}>
+          <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-10 py-4">
+            <div className="flex items-center space-x-3">
+              <Image
+                src="/s15-icon.png"
+                alt="Station 15"
+                width={40}
+                height={40}
+                className="object-contain"
+              />
+              <h1 className="text-2xl font-bold" style={{ color: COLORS.gray900 }}>Transfers / Sweeps</h1>
             </div>
           </div>
-        </div>
-      </main>
+        </header>
+
+        <main className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-10 py-8">
+          <p className="text-base mb-8" style={{ color: COLORS.gray600 }}>Visualize internal flows</p>
+          
+          <div className="bg-white rounded-xl border shadow-sm p-6" style={{ borderColor: COLORS.gray200 }}>
+            <div className="h-64 border-2 border-dashed rounded-lg flex items-center justify-center" style={{ borderColor: COLORS.gray300 }}>
+              <span style={{ color: COLORS.gray400 }}>Internal flow visualization (placeholder)</span>
+            </div>
+          </div>
+        </main>
+      </div>
     </div>
   );
 }
