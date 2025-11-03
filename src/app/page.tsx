@@ -8,6 +8,7 @@ import Sidebar, { useSidebar } from "@/components/Sidebar";
 import UtilizationCircle from "@/components/UtilizationCircle";
 import { getUtilizationColor } from "@/components/UtilizationCircle";
 import CreditLimitTooltip from "@/components/CreditLimitTooltip";
+import { fetchBusinessMetrics } from "@/lib/api";
 
 // PRD Brand Colors: Indigo #312E81 / Crimson #DC143C
 const COLORS = {
@@ -33,32 +34,16 @@ export default function Dashboard() {
   const { sidebarWidth } = useSidebar();
 
   useEffect(() => {
-    // Fetch business metrics from Next.js API routes
-    // For now using mock data (API routes are available at /api/v1/business/:id)
-    const mockMetrics: BusinessMetrics = {
-      business: {
-        id: "demo-business-1",
-        name: "ABC Corp",
-        balance: 12500,
-        recurringPct: 68.5,
-        volatility: 12.3,
-        chargeLimit: 50000,
-        currentBalance: 12500,
-        flexState: { riskLevel: "low", lastReview: "2024-01-15" }
-      },
-      recentTransactions: [
-        { id: "1", amount: -2500, type: "outflow", description: "Office supplies", date: "2024-01-10", transactionDate: "2024-01-10" },
-        { id: "2", amount: 15000, type: "recurring", description: "Recurring revenue", date: "2024-01-08", transactionDate: "2024-01-08" },
-      ],
-      upcomingInvoices: [
-        { id: "1", customerId: "customer-1", amount: 3500, dueDate: "2024-01-25", paid: false },
-      ],
-      utilizationPercentage: 25,
-    };
-    setTimeout(() => {
-      setMetrics(mockMetrics);
-      setLoading(false);
-    }, 100);
+    // Fetch business metrics using abstraction layer
+    fetchBusinessMetrics('demo-business-1')
+      .then((data) => {
+        setMetrics(data);
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.error('Failed to fetch metrics:', error);
+        setLoading(false);
+      });
   }, []);
 
   if (loading) {
@@ -165,7 +150,13 @@ export default function Dashboard() {
             <div className="bg-white rounded-xl border shadow-sm p-6" style={{ borderColor: COLORS.gray200 }}>
               <div className="flex items-center justify-between mb-6">
                 <h3 className="text-lg font-semibold" style={{ color: COLORS.gray900 }}>Your Credit Profile</h3>
-                <span className="text-sm cursor-pointer hover:underline" style={{ color: COLORS.indigo }}>See details →</span>
+                <Link 
+                  href="/credit-profile"
+                  className="text-sm cursor-pointer hover:underline" 
+                  style={{ color: COLORS.indigo }}
+                >
+                  See details →
+                </Link>
               </div>
               <div className="space-y-4">
                 <div className="flex items-center space-x-3">
