@@ -88,15 +88,36 @@ const AdminIcon = ({ className }: { className?: string }) => (
   </svg>
 );
 
+const VirtualCardIcon = ({ className }: { className?: string }) => (
+  <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24" width="16" height="16">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+  </svg>
+);
+
+const EnvelopeIcon = ({ className }: { className?: string }) => (
+  <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24" width="16" height="16">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
+  </svg>
+);
+
 function SidebarContent() {
   const pathname = usePathname();
   const { collapsed, setCollapsed } = useSidebar();
   const [showProfileMenu, setShowProfileMenu] = useState(false);
+  const [showCheckingSubmenu, setShowCheckingSubmenu] = useState(false);
 
   const navigation = [
     { name: 'Home', href: '/', icon: HomeIcon },
-    { name: 'Checking', href: '/checking', icon: CheckingIcon },
-    { name: 'Charge Card', href: '/charge-card', icon: CardIcon },
+    { 
+      name: 'Checking', 
+      href: '/checking', 
+      icon: CheckingIcon,
+      submenu: [
+        { name: 'Virtual Cards', href: '/checking/virtual-cards', icon: VirtualCardIcon },
+        { name: 'Envelope Accounts', href: '/checking/envelope-accounts', icon: EnvelopeIcon },
+      ]
+    },
+    { name: 'Phase Card', href: '/phase-card', icon: CardIcon },
     { name: 'Flex', href: '/flex', icon: FlexIcon },
     { name: 'Transfers', href: '/transfers', icon: TransferIcon },
     { name: 'Perks', href: '/perks', icon: PerksIcon },
@@ -108,6 +129,12 @@ function SidebarContent() {
     }
     return pathname?.startsWith(href);
   };
+
+  // Check if checking submenu should be open
+  const isCheckingActive = pathname?.startsWith('/checking');
+  if (isCheckingActive && !showCheckingSubmenu) {
+    setShowCheckingSubmenu(true);
+  }
 
   return (
     <>
@@ -146,23 +173,62 @@ function SidebarContent() {
           {navigation.map((item) => {
             const active = isActive(item.href);
             const IconComponent = item.icon;
+            const hasSubmenu = item.submenu && item.submenu.length > 0;
+            
             return (
-              <Link
-                key={item.name}
-                href={item.href}
-                className={`flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors ${
-                  active ? '' : 'hover:opacity-80'
-                }`}
-                style={{
-                  backgroundColor: active ? COLORS.gray800 : 'transparent',
-                  color: '#FFFFFF',
-                  borderLeft: active ? `3px solid ${COLORS.indigo}` : '3px solid transparent',
-                }}
-                title={collapsed ? item.name : undefined}
-              >
-                <IconComponent className="flex-shrink-0" />
-                {!collapsed && <span className="text-sm font-medium">{item.name}</span>}
-              </Link>
+              <div key={item.name}>
+                <div className="flex items-center">
+                  <Link
+                    href={item.href}
+                    className={`flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors flex-1 ${
+                      active ? '' : 'hover:opacity-80'
+                    }`}
+                    style={{
+                      backgroundColor: active ? COLORS.gray800 : 'transparent',
+                      color: '#FFFFFF',
+                      borderLeft: active ? `3px solid ${COLORS.indigo}` : '3px solid transparent',
+                    }}
+                    title={collapsed ? item.name : undefined}
+                  >
+                    <IconComponent className="flex-shrink-0" />
+                    {!collapsed && <span className="text-sm font-medium">{item.name}</span>}
+                  </Link>
+                  {!collapsed && hasSubmenu && (
+                    <button
+                      onClick={() => setShowCheckingSubmenu(!showCheckingSubmenu)}
+                      className="p-2 text-white hover:bg-gray-700 rounded transition-colors"
+                      style={{ color: '#FFFFFF' }}
+                    >
+                      {showCheckingSubmenu ? '▼' : '▶'}
+                    </button>
+                  )}
+                </div>
+                {!collapsed && hasSubmenu && showCheckingSubmenu && (
+                  <div className="ml-8 mt-1 space-y-1">
+                    {item.submenu!.map((subItem) => {
+                      const subActive = isActive(subItem.href);
+                      const SubIconComponent = subItem.icon;
+                      return (
+                        <Link
+                          key={subItem.name}
+                          href={subItem.href}
+                          className={`flex items-center space-x-2 px-4 py-2 rounded-lg transition-colors text-sm ${
+                            subActive ? '' : 'hover:opacity-80'
+                          }`}
+                          style={{
+                            backgroundColor: subActive ? COLORS.gray700 : 'transparent',
+                            color: '#FFFFFF',
+                            borderLeft: subActive ? `2px solid ${COLORS.indigo}` : '2px solid transparent',
+                          }}
+                        >
+                          <SubIconComponent className="flex-shrink-0" />
+                          <span>{subItem.name}</span>
+                        </Link>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
             );
           })}
         </nav>
@@ -213,6 +279,7 @@ function SidebarContent() {
                   backgroundColor: COLORS.gray800,
                   borderColor: COLORS.gray700,
                 }}
+                onMouseLeave={() => setShowProfileMenu(false)}
               >
                 <div className="py-2">
                   <Link

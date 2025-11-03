@@ -185,7 +185,7 @@ export default function Dashboard() {
               <h3 className="text-lg font-semibold mb-6" style={{ color: COLORS.gray900 }}>Quick Actions</h3>
               <div className="space-y-3">
                 <Link 
-                  href="/charge-card"
+                  href="/phase-card"
                   className="flex items-center justify-between p-4 rounded-lg border transition-all hover:shadow-sm group"
                   style={{ 
                     borderColor: COLORS.gray200,
@@ -202,7 +202,7 @@ export default function Dashboard() {
                   <span className="text-xl transition-transform group-hover:translate-x-1" style={{ color: COLORS.crimson }}>→</span>
                 </Link>
                 <Link 
-                  href="/charge-card"
+                  href="/phase-card"
                   className="flex items-center justify-between p-4 rounded-lg border transition-all hover:shadow-sm group"
                   style={{ 
                     borderColor: COLORS.gray200,

@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import Sidebar, { useSidebar } from "@/components/Sidebar";
+import BackButton from "@/components/BackButton";
 import { fetchBusinessMetrics, fetchCreditHistory } from "@/lib/api";
 import { BusinessMetrics } from "@/lib/types";
 import { getUtilizationColor } from "@/components/UtilizationCircle";
@@ -168,6 +169,9 @@ export default function CreditProfilePage() {
         {/* Header */}
         <header className="bg-white border-b" style={{ borderColor: COLORS.gray200 }}>
           <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-10 py-4">
+            <div className="mb-3">
+              <BackButton customBackPath="/" customLabel="Home" />
+            </div>
             <div className="flex items-center space-x-3">
               <Image
                 src="/s15-icon.png"

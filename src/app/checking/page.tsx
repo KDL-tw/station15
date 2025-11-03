@@ -1,6 +1,7 @@
 'use client';
 
 import Image from "next/image";
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import Sidebar, { useSidebar } from "@/components/Sidebar";
 import { fetchBusinessMetrics, fetchTransactions } from "@/lib/api";
@@ -72,9 +73,25 @@ function getHeatmapColor(value: number, max: number): string {
   }
 }
 
+interface AccountCard {
+  id: string;
+  name: string;
+  balance: number;
+  accountNumber: string;
+  type: 'checking' | 'savings' | 'envelope';
+}
+
 export default function CheckingPage() {
   const { sidebarWidth } = useSidebar();
-  const [balance, setBalance] = useState<number>(0);
+  const [accounts, setAccounts] = useState<AccountCard[]>([
+    {
+      id: '1',
+      name: 'Primary Checking',
+      balance: 12500.00,
+      accountNumber: '****1234',
+      type: 'checking',
+    },
+  ]);
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [cashflow, setCashflow] = useState<{ inflow: number; outflow: number; net: number }>({
     inflow: 0,
@@ -91,7 +108,10 @@ export default function CheckingPage() {
           fetchTransactions('demo-business-1', 50),
         ]);
         
-        setBalance(metricsData.business.currentBalance);
+        // Set accounts with balance from metrics
+        setAccounts(prev => prev.map(acc => 
+          acc.id === '1' ? { ...acc, balance: metricsData.business.currentBalance } : acc
+        ));
         setTransactions(transactionsData);
 
         // Calculate cashflow (last 30 days)
@@ -199,51 +219,95 @@ export default function CheckingPage() {
         </header>
 
         <main className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-10 py-8">
-          {/* Balance and Cashflow Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-            {/* Balance Card */}
-            <div className="bg-white rounded-xl border shadow-sm p-6" style={{ borderColor: COLORS.gray200 }}>
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="text-lg font-semibold" style={{ color: COLORS.gray900 }}>Current Balance</h2>
-              </div>
-              <div className="text-4xl font-bold mb-2" style={{ color: COLORS.indigo }}>
-                ${balance.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-              </div>
-              <div className="text-sm" style={{ color: COLORS.gray500 }}>
-                Available now
+          {/* Account Cards Section */}
+          <div className="mb-8">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-xl font-semibold" style={{ color: COLORS.gray900 }}>Account Cards</h2>
+              <div className="flex space-x-3">
+                <Link
+                  href="/checking/virtual-cards"
+                  className="px-4 py-2 rounded-lg font-semibold text-sm transition-all hover:shadow-md"
+                  style={{
+                    backgroundColor: COLORS.indigo,
+                    color: '#FFFFFF',
+                  }}
+                >
+                  Make New Virtual Card
+                </Link>
+                <Link
+                  href="/checking/envelope-accounts"
+                  className="px-4 py-2 rounded-lg font-semibold text-sm transition-all hover:shadow-md"
+                  style={{
+                    backgroundColor: COLORS.indigo,
+                    color: '#FFFFFF',
+                  }}
+                >
+                  Make New Account
+                </Link>
               </div>
             </div>
-
-            {/* Cashflow Card */}
-            <div className="bg-white rounded-xl border shadow-sm p-6" style={{ borderColor: COLORS.gray200 }}>
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="text-lg font-semibold" style={{ color: COLORS.gray900 }}>Cashflow (30 Days)</h2>
-              </div>
-              <div className="space-y-3">
-                <div className="flex items-center justify-between">
-                  <span className="text-sm" style={{ color: COLORS.gray600 }}>Inflow</span>
-                  <span className="text-lg font-semibold" style={{ color: COLORS.green }}>
-                    ${cashflow.inflow.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                  </span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-sm" style={{ color: COLORS.gray600 }}>Outflow</span>
-                  <span className="text-lg font-semibold" style={{ color: COLORS.red }}>
-                    -${cashflow.outflow.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                  </span>
-                </div>
-                <div className="border-t pt-3" style={{ borderColor: COLORS.gray200 }}>
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm font-medium" style={{ color: COLORS.gray900 }}>Net</span>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+              {accounts.map((account) => (
+                <div
+                  key={account.id}
+                  className="bg-white rounded-xl border shadow-sm p-6 hover:shadow-md transition-shadow"
+                  style={{ borderColor: COLORS.gray200 }}
+                >
+                  <div className="flex items-center justify-between mb-4">
+                    <h3 className="text-lg font-semibold" style={{ color: COLORS.gray900 }}>
+                      {account.name}
+                    </h3>
                     <span
-                      className="text-xl font-bold"
+                      className="text-xs px-2 py-1 rounded capitalize"
                       style={{
-                        color: cashflow.net >= 0 ? COLORS.green : COLORS.red,
+                        backgroundColor: COLORS.gray100,
+                        color: COLORS.gray700,
                       }}
                     >
-                      {cashflow.net >= 0 ? '+' : ''}${cashflow.net.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                      {account.type}
                     </span>
                   </div>
+                  <div className="text-3xl font-bold mb-2" style={{ color: COLORS.indigo }}>
+                    ${account.balance.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                  </div>
+                  <div className="text-sm mb-1" style={{ color: COLORS.gray500 }}>
+                    Account: {account.accountNumber}
+                  </div>
+                  <div className="text-sm" style={{ color: COLORS.gray500 }}>
+                    Available now
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Cashflow Card */}
+          <div className="bg-white rounded-xl border shadow-sm p-6 mb-8" style={{ borderColor: COLORS.gray200 }}>
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-lg font-semibold" style={{ color: COLORS.gray900 }}>Cashflow (30 Days)</h2>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div>
+                <div className="text-sm mb-2" style={{ color: COLORS.gray600 }}>Inflow</div>
+                <div className="text-2xl font-bold" style={{ color: COLORS.green }}>
+                  ${cashflow.inflow.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                </div>
+              </div>
+              <div>
+                <div className="text-sm mb-2" style={{ color: COLORS.gray600 }}>Outflow</div>
+                <div className="text-2xl font-bold" style={{ color: COLORS.red }}>
+                  -${cashflow.outflow.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                </div>
+              </div>
+              <div>
+                <div className="text-sm mb-2" style={{ color: COLORS.gray600 }}>Net</div>
+                <div
+                  className="text-2xl font-bold"
+                  style={{
+                    color: cashflow.net >= 0 ? COLORS.green : COLORS.red,
+                  }}
+                >
+                  {cashflow.net >= 0 ? '+' : ''}${cashflow.net.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                 </div>
               </div>
             </div>

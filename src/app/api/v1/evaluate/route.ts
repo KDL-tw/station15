@@ -40,7 +40,7 @@ export async function POST(request: NextRequest) {
         {
           id: `event-${Date.now()}`,
           ruleId: 'charge_card_limit_v0',
-          ruleName: 'Charge Card Limit Calculation',
+          ruleName: 'Phase Card Limit Calculation',
           trigger: { avg_balance_30d: 12500 },
           triggerDetail: { avg_balance_30d: 12500 },
           outcome: 'calculated',
