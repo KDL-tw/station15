@@ -39,26 +39,7 @@ export function saveEnvelopeAccounts(accounts: EnvelopeAccount[]): void {
 
 // Get default envelope accounts
 function getDefaultEnvelopeAccounts(): EnvelopeAccount[] {
-  return [
-    {
-      id: '1',
-      name: 'Tax Reserve',
-      balance: 5000.00,
-      accountNumber: '4853',
-      targetAmount: 10000.00,
-      purpose: 'Quarterly tax payments',
-      createdAt: '2024-01-01',
-    },
-    {
-      id: '2',
-      name: 'Equipment Fund',
-      balance: 2500.00,
-      accountNumber: '7892',
-      targetAmount: 5000.00,
-      purpose: 'New equipment purchases',
-      createdAt: '2024-01-05',
-    },
-  ];
+  return []; // Start with empty - users will create their own accounts
 }
 
 // Add new envelope account
