@@ -1,7 +1,7 @@
 'use client';
 
 import Image from "next/image";
-import Sidebar from "@/components/Sidebar";
+import Sidebar, { useSidebar } from "@/components/Sidebar";
 
 const COLORS = {
   indigo: '#312E81',

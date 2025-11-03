@@ -1,7 +1,7 @@
 'use client';
 
 import Image from "next/image";
-import Sidebar from "@/components/Sidebar";
+import Sidebar, { useSidebar } from "@/components/Sidebar";
 
 const COLORS = {
   indigo: '#312E81',
@@ -14,10 +14,11 @@ const COLORS = {
 };
 
 export default function FlexPage() {
+  const { sidebarWidth } = useSidebar();
   return (
     <div className="min-h-screen flex" style={{ backgroundColor: COLORS.gray50 }}>
       <Sidebar />
-      <div className="flex-1" style={{ marginLeft: '256px' }}>
+      <div className="flex-1" style={{ marginLeft: sidebarWidth }}>
         <header className="bg-white border-b" style={{ borderColor: COLORS.gray200 }}>
           <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-10 py-4">
             <div className="flex items-center space-x-3">

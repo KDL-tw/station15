@@ -2,7 +2,35 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { createContext, useContext, useState, ReactNode } from 'react';
+
+// Sidebar Context
+interface SidebarContextType {
+  collapsed: boolean;
+  setCollapsed: (collapsed: boolean) => void;
+  sidebarWidth: string;
+}
+
+const SidebarContext = createContext<SidebarContextType | undefined>(undefined);
+
+export function SidebarProvider({ children }: { children: ReactNode }) {
+  const [collapsed, setCollapsed] = useState(false);
+  const sidebarWidth = collapsed ? '64px' : '256px';
+
+  return (
+    <SidebarContext.Provider value={{ collapsed, setCollapsed, sidebarWidth }}>
+      {children}
+    </SidebarContext.Provider>
+  );
+}
+
+export function useSidebar() {
+  const context = useContext(SidebarContext);
+  if (context === undefined) {
+    return { collapsed: false, setCollapsed: () => {}, sidebarWidth: '256px' };
+  }
+  return context;
+}
 
 const COLORS = {
   indigo: '#312E81',
@@ -16,9 +44,9 @@ const COLORS = {
   gray900: '#111827',
 };
 
-export default function Sidebar() {
+function SidebarContent() {
   const pathname = usePathname();
-  const [collapsed, setCollapsed] = useState(false);
+  const { collapsed, setCollapsed } = useSidebar();
 
   const navigation = [
     { name: 'Dashboard', href: '/', icon: '🏠' },
@@ -131,6 +159,18 @@ export default function Sidebar() {
         )}
       </aside>
 
+    </>
+  );
+}
+
+export default function Sidebar() {
+  const { sidebarWidth } = useSidebar();
+  
+  return (
+    <>
+      <SidebarContent />
+      {/* Spacer div to account for fixed sidebar */}
+      <div style={{ width: sidebarWidth }} className="flex-shrink-0" />
     </>
   );
 }

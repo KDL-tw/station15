@@ -4,7 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { BusinessMetrics } from "@/lib/types";
-import Sidebar from "@/components/Sidebar";
+import Sidebar, { useSidebar } from "@/components/Sidebar";
 import UtilizationCircle from "@/components/UtilizationCircle";
 import CreditLimitTooltip from "@/components/CreditLimitTooltip";
 
@@ -29,6 +29,7 @@ const COLORS = {
 export default function Dashboard() {
   const [metrics, setMetrics] = useState<BusinessMetrics | null>(null);
   const [loading, setLoading] = useState(true);
+  const { sidebarWidth } = useSidebar();
 
   useEffect(() => {
     // Fetch business metrics from Next.js API routes
@@ -93,7 +94,7 @@ export default function Dashboard() {
       <Sidebar />
 
       {/* Main Content Area */}
-      <div className="flex-1" style={{ marginLeft: '256px' }}>
+      <div className="flex-1" style={{ marginLeft: sidebarWidth }}>
         {/* Header with S15 Icon */}
         <header className="bg-white border-b" style={{ borderColor: COLORS.gray200 }}>
           <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-10 py-4">
