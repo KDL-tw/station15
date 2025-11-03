@@ -3,7 +3,8 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { getEnvelopeAccounts, formatAccountNameForNav, EnvelopeAccount } from '@/lib/envelopeAccounts';
+import { getCheckingAccounts, formatAccountNameForNav as formatCheckingName, CheckingAccount } from '@/lib/checkingAccounts';
+import { getEnvelopeAccounts, formatAccountNameForNav as formatEnvelopeName, EnvelopeAccount } from '@/lib/envelopeAccounts';
 
 // Sidebar Context
 interface SidebarContextType {
@@ -106,13 +107,16 @@ function SidebarContent() {
   const { collapsed, setCollapsed } = useSidebar();
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const [showCheckingSubmenu, setShowCheckingSubmenu] = useState(false);
+  const [checkingAccounts, setCheckingAccounts] = useState<CheckingAccount[]>([]);
   const [envelopeAccounts, setEnvelopeAccounts] = useState<EnvelopeAccount[]>([]);
 
-  // Load envelope accounts
+  // Load checking and envelope accounts
   useEffect(() => {
     const loadAccounts = () => {
-      const accounts = getEnvelopeAccounts();
-      setEnvelopeAccounts(accounts);
+      const checking = getCheckingAccounts();
+      const envelopes = getEnvelopeAccounts();
+      setCheckingAccounts(checking);
+      setEnvelopeAccounts(envelopes);
     };
     
     loadAccounts();
@@ -123,20 +127,39 @@ function SidebarContent() {
     };
     
     window.addEventListener('storage', handleStorageChange);
+    window.addEventListener('checkingAccountsChanged', handleStorageChange);
     window.addEventListener('envelopeAccountsChanged', handleStorageChange);
     
     return () => {
       window.removeEventListener('storage', handleStorageChange);
+      window.removeEventListener('checkingAccountsChanged', handleStorageChange);
       window.removeEventListener('envelopeAccountsChanged', handleStorageChange);
     };
   }, []);
 
+  // Build checking accounts submenu items
+  const checkingAccountSubmenu = checkingAccounts.map((account) => ({
+    name: formatCheckingName(account),
+    href: `/checking/${account.id}`,
+    icon: CheckingIcon,
+  }));
+
   // Build envelope accounts submenu items
   const envelopeAccountSubmenu = envelopeAccounts.map((account) => ({
-    name: formatAccountNameForNav(account),
+    name: formatEnvelopeName(account),
     href: `/checking/envelope-accounts/${account.id}`,
     icon: EnvelopeIcon,
   }));
+
+  // Combine all submenu items
+  const allSubmenuItems = [
+    ...checkingAccountSubmenu,
+    { name: 'Virtual Cards', href: '/checking/virtual-cards', icon: VirtualCardIcon },
+    ...envelopeAccountSubmenu,
+  ];
+
+  // Only show dropdown if there are accounts
+  const hasSubmenu = allSubmenuItems.length > 0;
 
   const navigation = [
     { name: 'Home', href: '/', icon: HomeIcon },
@@ -144,10 +167,7 @@ function SidebarContent() {
       name: 'Checking', 
       href: '/checking', 
       icon: CheckingIcon,
-      submenu: [
-        { name: 'Virtual Cards', href: '/checking/virtual-cards', icon: VirtualCardIcon },
-        ...envelopeAccountSubmenu,
-      ]
+      submenu: hasSubmenu ? allSubmenuItems : undefined,
     },
     { name: 'Phase Card', href: '/phase-card', icon: CardIcon },
     { name: 'Flex', href: '/flex', icon: FlexIcon },

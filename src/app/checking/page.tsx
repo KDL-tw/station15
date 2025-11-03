@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import Sidebar, { useSidebar } from "@/components/Sidebar";
 import { fetchBusinessMetrics, fetchTransactions } from "@/lib/api";
 import { Transaction } from "@/lib/types";
+import { getCheckingAccounts, saveCheckingAccounts, CheckingAccount } from "@/lib/checkingAccounts";
 import { 
   ResponsiveContainer,
   Cell
@@ -83,15 +84,7 @@ interface AccountCard {
 
 export default function CheckingPage() {
   const { sidebarWidth } = useSidebar();
-  const [accounts, setAccounts] = useState<AccountCard[]>([
-    {
-      id: '1',
-      name: 'Primary Checking',
-      balance: 12500.00,
-      accountNumber: '****1234',
-      type: 'checking',
-    },
-  ]);
+  const [accounts, setAccounts] = useState<AccountCard[]>([]);
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [cashflow, setCashflow] = useState<{ inflow: number; outflow: number; net: number }>({
     inflow: 0,
@@ -103,15 +96,23 @@ export default function CheckingPage() {
   useEffect(() => {
     const loadData = async () => {
       try {
+        // Load checking accounts from localStorage
+        const checkingAccounts = getCheckingAccounts();
         const [metricsData, transactionsData] = await Promise.all([
           fetchBusinessMetrics('demo-business-1'),
           fetchTransactions('demo-business-1', 50),
         ]);
         
-        // Set accounts with balance from metrics
-        setAccounts(prev => prev.map(acc => 
-          acc.id === '1' ? { ...acc, balance: metricsData.business.currentBalance } : acc
-        ));
+        // Convert checking accounts to AccountCard format and update balance from metrics
+        const accountCards: AccountCard[] = checkingAccounts.map((acc) => ({
+          id: acc.id,
+          name: acc.name,
+          balance: acc.id === '1' ? metricsData.business.currentBalance : acc.balance,
+          accountNumber: `****${acc.accountNumber}`,
+          type: acc.type,
+        }));
+        
+        setAccounts(accountCards);
         setTransactions(transactionsData);
 
         // Calculate cashflow (last 30 days)
@@ -135,6 +136,18 @@ export default function CheckingPage() {
           outflow,
           net: inflow - outflow,
         });
+
+        // Save updated accounts back to localStorage (with updated balance)
+        const updatedAccounts: CheckingAccount[] = checkingAccounts.map((acc) => ({
+          ...acc,
+          balance: acc.id === '1' ? metricsData.business.currentBalance : acc.balance,
+        }));
+        saveCheckingAccounts(updatedAccounts);
+
+        // Notify sidebar of change
+        if (typeof window !== 'undefined') {
+          window.dispatchEvent(new Event('checkingAccountsChanged'));
+        }
       } catch (error) {
         console.error('Failed to load checking data:', error);
       } finally {
